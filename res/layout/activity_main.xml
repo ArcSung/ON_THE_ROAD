@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:paddingBottom="@dimen/activity_vertical_margin"
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+tools:context=".MainActivity" >
+ 
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content" >
+ 
+<TextView
+android:id="@+id/title"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:textSize="25dp"
+android:text="碼表：" />
+ 
+<TextView
+android:id="@+id/timer"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:textSize="25dp"
+android:text="00:00" />
+</LinearLayout>
+ 
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content" >
+ 
+<Button
+android:id="@+id/start"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="開始"
+android:textSize="25dp" />
+ 
+<Button
+android:id="@+id/stop"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="停止"
+android:textSize="25dp" />
+ 
+<Button
+android:id="@+id/zero"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="歸零"
+android:textSize="25dp" />       
+ 
+<Button
+android:id="@+id/end"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="結束"
+android:textSize="25dp" />       
+</LinearLayout>
+
+<TextView
+android:id="@+id/receive"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:textSize="5dp"
+android:text="00" />
+
+
+</LinearLayout>
