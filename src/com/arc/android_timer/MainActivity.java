@@ -75,7 +75,7 @@ protected void onCreate(Bundle savedInstanceState) {
     stop.setOnClickListener(listener);
     zero.setOnClickListener(listener);
     end.setOnClickListener(listener);
-    //connect.setOnClickListener(listener);
+    connect_btn.setOnClickListener(listener);
     
     UiDialogSetting = new UiDialog();
 }
