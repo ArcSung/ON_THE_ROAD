@@ -22,7 +22,6 @@ public class UiDialog implements OnSeekBarChangeListener
 {
 	
 	private static final String TAG = "Dialog"; 
-	private String[] AddressList = {"98:D3:31:B1:77:84","00:14:01:25:11:21"};
 	private String DEVICE_ADDRESS;
 	private String DEVICE_ADDRESS2;
 	private int Threshold;
@@ -154,16 +153,7 @@ public class UiDialog implements OnSeekBarChangeListener
 	        		DEVICE_ADDRESS2 = "NULL";
 	        		Toast.makeText(MainActivity, "starting and Finishing address can't set same", Toast.LENGTH_LONG).show();
 	        	}	
-	    		((MainActivity) MainActivity).ArdConnect_setting(DEVICE_ADDRESS, DEVICE_ADDRESS2);
-	    		if(DEVICE_ADDRESS != "NULL")
-	    		{
-	    			((MainActivity) MainActivity).ArdConnect(DEVICE_ADDRESS);
-	    		}
-	    		
-	    		if(DEVICE_ADDRESS2 != "NULL")
-	    		{
-	    			((MainActivity) MainActivity).ArdConnect(DEVICE_ADDRESS2);
-	    		}	
+	    		((MainActivity) MainActivity).ArdConnect_setting(DEVICE_ADDRESS, DEVICE_ADDRESS2);	
 	        }
 	    });
 		

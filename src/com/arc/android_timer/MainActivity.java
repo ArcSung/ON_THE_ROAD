@@ -35,6 +35,7 @@ private Button start;
 private Button stop;
 private Button zero;
 private Button end;
+private Button connect_btn;
 
 private ArduinoReceiver arduinoReceiver = new ArduinoReceiver();
 private int s_start = 1, s_stop = 2;
@@ -58,6 +59,7 @@ protected void onCreate(Bundle savedInstanceState) {
     stop = (Button)findViewById(R.id.stop);
     zero = (Button)findViewById(R.id.zero);
     end = (Button)findViewById(R.id.end);
+    connect_btn = (Button)findViewById(R.id.connect);
     
     
     
@@ -73,6 +75,7 @@ protected void onCreate(Bundle savedInstanceState) {
     stop.setOnClickListener(listener);
     zero.setOnClickListener(listener);
     end.setOnClickListener(listener);
+    //connect.setOnClickListener(listener);
     
     UiDialogSetting = new UiDialog();
 }
@@ -193,6 +196,12 @@ private OnClickListener listener =new OnClickListener(){
             break;
             case R.id.end:
                 finish();
+            break;    
+            case R.id.connect:
+            	if(DEVICE_ADDRESS != "NULL")
+            		ArdConnect(DEVICE_ADDRESS);
+            	if(DEVICE_ADDRESS2 != "NULL")
+            		ArdConnect(DEVICE_ADDRESS2);
             break;
         }
     } 
