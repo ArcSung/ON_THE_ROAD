@@ -94,7 +94,7 @@ protected void onStart(){
 		ArdConnect(DEVICE_ADDRESS2);
 	
 	registerReceiver(arduinoReceiver, new IntentFilter(AmarinoIntent.ACTION_RECEIVED));
-	ArdSetting(Threshold);
+	ArdThreshold_Setting(Threshold);
 }
 
 @Override
@@ -272,7 +272,7 @@ public void ArdConnect_setting(String str, String str2)
 	Log.i(TAG, "DEVICE_ADDRESS2 :"+str2);
 }
 
-public void ArdSetting(int arg)
+public void ArdThreshold_Setting(int arg)
 {
 	Threshold = arg;
 	Log.i(TAG, "ArdSetting:"+arg);
