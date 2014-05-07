@@ -31,7 +31,7 @@ void loop()
   //int avg = average_filter(dist);
   //meetAndroid.send(dist);
   //if(dist < Threshold && dist > 20)
-  if(compare_filter(dist, Threshold))
+  if(compare_filter(dist, Threshold) && (dist > 20))
   {
      meetAndroid.send(dist);
      digitalWrite(LEDpin, HIGH);
