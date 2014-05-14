@@ -61,19 +61,38 @@ android:text="結束"
 android:textSize="25dp" />       
 </LinearLayout>
 
-<Button
+<ToggleButton
 android:id="@+id/connect"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
-android:text="連線"
-android:textSize="25dp" />
+android:textSize="25dp" 
+android:textOff="連線"
+android:textOn="中斷"
+/>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
 
+    <TextView
+        android:id="@+id/startdec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="starting:"
+        android:textSize="25dp" />
+
+</LinearLayout>
+
+<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 <TextView
-android:id="@+id/receive"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:textSize="5dp"
-android:text="00" />
+        android:id="@+id/finishdec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:text="finishing:" />
+
+</LinearLayout>
 
 
 </LinearLayout>

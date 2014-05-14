@@ -24,27 +24,33 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import at.abraxas.amarino.Amarino;
 import at.abraxas.amarino.AmarinoIntent;
  
 public class MainActivity extends Activity  {
  
 private TextView timer;
-private TextView receive;
+private TextView startdec;
+private TextView finishtdec;
 private Button start;
 private Button stop;
 private Button zero;
 private Button end;
-private Button connect_btn;
+private ToggleButton connect_btn;
 
 private ArduinoReceiver arduinoReceiver = new ArduinoReceiver();
 private int s_start = 1, s_stop = 2;
 private boolean startflag=false;
+public boolean connectflag=false;
+public boolean FinishContFlag=false;
+public boolean StartContFlag=false;
 private int tsec=0,csec=0,cmin=0, minsec=0, Threshold=150;
-private String DEVICE_ADDRESS = "NULL";
-private String DEVICE_ADDRESS2 = "NULL";
+public String DEVICE_ADDRESS = "NULL";
+public String DEVICE_ADDRESS2 = "NULL";
 private static final String TAG = "BluetoothStopCount"; 
 private UiDialog UiDialogSetting;
+private Thread ConnectThread;
 
 //98:D3:31:B1:77:84
 //00:14:01:25:11:21
@@ -54,14 +60,16 @@ protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     timer = (TextView)findViewById(R.id.timer);
-    receive = (TextView)findViewById(R.id.receive);
+    startdec = (TextView)findViewById(R.id.startdec);
+    finishtdec = (TextView)findViewById(R.id.finishdec);
     start = (Button)findViewById(R.id.start);
     stop = (Button)findViewById(R.id.stop);
     zero = (Button)findViewById(R.id.zero);
     end = (Button)findViewById(R.id.end);
-    connect_btn = (Button)findViewById(R.id.connect);
+    connect_btn = (ToggleButton)findViewById(R.id.connect);
     
-    
+    ConnectThread = new DiscConnect();
+    ((DiscConnect) ConnectThread).setup(this);
     
     
     //宣告Timer
@@ -87,6 +95,8 @@ protected void onStart(){
 	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	Threshold = prefs.getInt("Threshold", 150);
 	//DEVICE_ADDRESS = prefs.getString("DEVICE_ADDRESS", "NULL");
+	ConnectThread.start();
+	
 	if(DEVICE_ADDRESS != "NULL")
 		ArdConnect(DEVICE_ADDRESS);
 	
@@ -106,10 +116,13 @@ protected void onStop() {
 		.putInt("Threshold", Threshold)
 		//.putString("DEVICE_ADDRESS", DEVICE_ADDRESS)
 	.commit();
-	
+	((DiscConnect) ConnectThread).StopThread();
+	ConnectThread.interrupt();
+	ConnectThread = null;
 	// if you connect in onStart() you must not forget to disconnect when your app is closed
 	Amarino.disconnect(this, DEVICE_ADDRESS);
 	Amarino.disconnect(this, DEVICE_ADDRESS2);
+	
 	
 	// do never forget to unregister a registered receiver
 	unregisterReceiver(arduinoReceiver);
@@ -175,7 +188,6 @@ private TimerTask task = new TimerTask(){
 };
  
 private OnClickListener listener =new OnClickListener(){
- 
 @Override
     public void onClick(View v) {
 // TODO Auto-generated method stub
@@ -198,10 +210,22 @@ private OnClickListener listener =new OnClickListener(){
                 finish();
             break;    
             case R.id.connect:
-            	if(DEVICE_ADDRESS != "NULL")
-            		ArdConnect(DEVICE_ADDRESS);
-            	if(DEVICE_ADDRESS2 != "NULL")
-            		ArdConnect(DEVICE_ADDRESS2);
+            	if(connect_btn.isChecked())
+            	{	
+            		if(DEVICE_ADDRESS != "NULL")
+            			ArdConnect(DEVICE_ADDRESS);
+            		if(DEVICE_ADDRESS2 != "NULL")
+            			ArdConnect(DEVICE_ADDRESS2);
+            		connectflag = true;
+            	}
+            	else
+            	{
+            		if(DEVICE_ADDRESS != "NULL")
+            			ArdDisconnect(DEVICE_ADDRESS);
+            		if(DEVICE_ADDRESS2 != "NULL")
+            			ArdDisconnect(DEVICE_ADDRESS2);
+            		connectflag = false;
+            	}
             break;
         }
     } 
@@ -214,7 +238,7 @@ public class ArduinoReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		String data = null;
+		String data = null;		
 		
 		// the device address from which the data was sent, we don't need it here but to demonstrate how you retrieve it
 		final String address = intent.getStringExtra(AmarinoIntent.EXTRA_DEVICE_ADDRESS);
@@ -229,28 +253,39 @@ public class ArduinoReceiver extends BroadcastReceiver {
 		if (dataType == AmarinoIntent.STRING_EXTRA){
 			data = intent.getStringExtra(AmarinoIntent.EXTRA_DATA);
 			
-			if (data != null){
-				receive.setText(data);
-				//mValueTV.setText(data);
-				try {
-					// since we know that our string value is an int number we can parse it to an integer
-					final int sensorReading = Integer.parseInt(data);
-					if(startflag==true && sensorReading <= Threshold && Finsih_flag == 0)
-					{
-						Log.i(TAG, "ArduinoReceiver:"+data);
-					    startflag=false;
-		                ArdUpdateState(s_stop);
-					}
-					else if(startflag==false && sensorReading <= Threshold && Start_flag == 0)
-					{
-						Log.i(TAG, "ArduinoReceiver2:"+data);
-					    startflag=true;
-		                ArdUpdateState(s_start);
-					}
-					//mGraph.addDataPoint(sensorReading);
-				} 
-				catch (NumberFormatException e) { Log.i(TAG, "oh data was not an integer");/* oh data was not an integer */ }
-			}
+					
+				if (data != null){
+					if(Finsih_flag == 0)
+					{	
+						finishtdec.setText("finishing:"+data);
+						FinishContFlag =true;
+					}	
+					if(Start_flag == 0)
+					{	
+						startdec.setText("starting:"+data);
+						StartContFlag =true;
+					}	
+					
+					try {
+						// since we know that our string value is an int number we can parse it to an integer
+						final int sensorReading = Integer.parseInt(data);
+						if( sensorReading > 20)
+							if(startflag==true &&  sensorReading <= Threshold && Finsih_flag == 0)
+							{
+								Log.i(TAG, "ArduinoReceiver:"+data);
+								startflag=false;
+								ArdUpdateState(s_stop);
+							}
+							else if(startflag==false && sensorReading <= Threshold && Start_flag == 0)
+							{
+								Log.i(TAG, "ArduinoReceiver2:"+data);
+								startflag=true;
+								ArdUpdateState(s_start);
+							}
+					} 
+					catch (NumberFormatException e) { Log.i(TAG, "oh data was not an integer");/* oh data was not an integer */ }
+				}
+			
 		}
 	}
 }
@@ -262,6 +297,12 @@ public void ArdConnect(String str)
 		Amarino.connect(this, str);
 	else
 		Log.d(TAG, "AddressFormat error:"+str);
+}
+
+public void ArdDisconnect(String str)
+{
+	Log.i(TAG, "ArdDisconnect:"+str);
+	Amarino.disconnect(this, DEVICE_ADDRESS);
 }
 
 public void ArdConnect_setting(String str, String str2)
@@ -277,6 +318,7 @@ public void ArdThreshold_Setting(int arg)
 	Threshold = arg;
 	Log.i(TAG, "ArdSetting:"+arg);
 	Amarino.sendDataToArduino(this, DEVICE_ADDRESS, 's', arg);
+	Amarino.sendDataToArduino(this, DEVICE_ADDRESS2, 's', arg);
 }
 
 public void ArdUpdateState(int arg)
@@ -284,6 +326,14 @@ public void ArdUpdateState(int arg)
 	Log.i(TAG, "ArdUpdateState:"+arg);
 	Amarino.sendDataToArduino(this, DEVICE_ADDRESS, 'o', arg);
 	//Amarino.sendDataToArduino(this, DEVICE_ADDRESS2, 'o', arg);
+}
+
+public void ArdCheckState(int arg)
+{
+	Log.i(TAG, "ArdCheckState:"+arg);
+	ArdThreshold_Setting(Threshold);
+	Amarino.sendDataToArduino(this, DEVICE_ADDRESS, 'c', arg);
+	Amarino.sendDataToArduino(this, DEVICE_ADDRESS2, 'c', arg);
 }
 
 
@@ -302,4 +352,59 @@ public boolean onOptionsItemSelected(MenuItem item)
 	return true;
 }
 
+}
+
+class DiscConnect extends Thread
+{
+	Activity MainAct;
+	Boolean Flag = false;
+	Boolean StartFlag = true;
+	public void setup(Activity act)
+	{
+		MainAct = act;
+		Flag =true;
+	}
+	
+	public void StopThread()
+	{
+		StartFlag = false;
+	}
+	
+	public void run()
+	{
+		while(StartFlag == true)
+		{
+			if(Flag == true && ((MainActivity) MainAct).connectflag == true)
+			{
+				((MainActivity) MainAct).FinishContFlag=false;
+				((MainActivity) MainAct).StartContFlag=false;
+				Log.i("DiscoverConnect","DiscConnect");
+				((MainActivity) MainAct).ArdCheckState(0);
+				try {
+					sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(((MainActivity) MainAct).connectflag == false)
+				{	
+					((MainActivity) MainAct).ArdDisconnect(((MainActivity) MainAct).DEVICE_ADDRESS);
+					((MainActivity) MainAct).ArdDisconnect(((MainActivity) MainAct).DEVICE_ADDRESS2);
+					Log.i("DiscoverConnect", "Stop discover");
+				}	
+				
+				if(((MainActivity) MainAct).DEVICE_ADDRESS != "NULL" && ((MainActivity) MainAct).FinishContFlag == false)
+				{	
+					((MainActivity) MainAct).ArdConnect(((MainActivity) MainAct).DEVICE_ADDRESS);
+					Log.i("DiscoverConnect","Reconnect ADDRESS1");
+				}	
+					
+				if(((MainActivity) MainAct).DEVICE_ADDRESS2 != "NULL" && ((MainActivity) MainAct).StartContFlag == false)
+				{	
+					((MainActivity) MainAct).ArdConnect(((MainActivity) MainAct).DEVICE_ADDRESS2);
+				    Log.i("DiscoverConnect","Reconnect ADDRESS2");
+				}    
+			}
+		}
+	}	
 }

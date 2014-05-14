@@ -22,6 +22,7 @@ void setup()
   pinMode(LEDpin, OUTPUT);
   meetAndroid.registerFunction(StopCount, 'o');
   meetAndroid.registerFunction(ArdSetting,'s');
+  meetAndroid.registerFunction(ArdCheck,'c');
 }
 
 void loop()
@@ -32,12 +33,9 @@ void loop()
   //meetAndroid.send(dist);
   //if(dist < Threshold && dist > 20)
   if(compare_filter(dist, Threshold) && (dist > 20))
-  {
-     meetAndroid.send(dist);
-     digitalWrite(LEDpin, HIGH);
-  }   
-  else
-     digitalWrite(LEDpin, LOW);    
+     meetAndroid.send(dist);   
+  else  
+     meetAndroid.send(0);   
 }
 
 void StopCount(byte flag, byte numOfValues)
@@ -48,6 +46,12 @@ void StopCount(byte flag, byte numOfValues)
 void ArdSetting(byte flag, byte numOfValues)
 {
    Threshold = meetAndroid.getInt();  
+}
+
+void ArdCheck(byte flag, byte numOfValues)
+{
+   int ACK = 0;
+   meetAndroid.send(ACK);
 }
 
 
