@@ -3,7 +3,7 @@
 
 
 int LEDpin = 4;
-int Threshold = 150;
+int Threshold = 250;
 const byte IRPIN = 1;
 float p[3];
 int i = 0;
@@ -29,9 +29,6 @@ void loop()
 {
   meetAndroid.receive(); // you need to keep this in your loop() to receive events
   int dist = Count_distnce();
-  //int avg = average_filter(dist);
-  //meetAndroid.send(dist);
-  //if(dist < Threshold && dist > 20)
   if(compare_filter(dist, Threshold) && (dist > 20))
      meetAndroid.send(dist);   
   else  
