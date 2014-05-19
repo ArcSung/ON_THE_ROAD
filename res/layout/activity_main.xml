@@ -54,10 +54,10 @@ android:text="歸零"
 android:textSize="25dp" />       
  
 <Button
-android:id="@+id/end"
+android:id="@+id/record"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
-android:text="結束"
+android:text="Record"
 android:textSize="25dp" />       
 </LinearLayout>
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
@@ -48,6 +49,11 @@ public class UiDialog implements OnSeekBarChangeListener
 		    	DEVICE_ADDRESS2 = DEVICE_ADDRESS_formMain2;
 		    	Setting_Dialog();
 		    	break;
+		    case R.id.recordlist:
+                Intent intent = new Intent();
+                intent.setClass(MainActivity, SQLiteDemoActivity.class);
+                MainActivity.startActivity(intent);
+		    	break;	
 		    case R.id.about:
 		    	Log.i(TAG, "UiDialog_main about");
 		    	About_Dialog();

@@ -36,7 +36,7 @@ private TextView finishtdec;
 private Button start;
 private Button stop;
 private Button zero;
-private Button end;
+private Button record;
 private ToggleButton connect_btn;
 
 private ArduinoReceiver arduinoReceiver = new ArduinoReceiver();
@@ -51,6 +51,7 @@ public String DEVICE_ADDRESS2 = "NULL";
 private static final String TAG = "BluetoothStopCount"; 
 private UiDialog UiDialogSetting;
 private Thread ConnectThread;
+public SQLiteDemoActivity SQLdb;
 
 //98:D3:31:B1:77:84
 //00:14:01:25:11:21
@@ -65,12 +66,8 @@ protected void onCreate(Bundle savedInstanceState) {
     start = (Button)findViewById(R.id.start);
     stop = (Button)findViewById(R.id.stop);
     zero = (Button)findViewById(R.id.zero);
-    end = (Button)findViewById(R.id.end);
+    record = (Button)findViewById(R.id.record);
     connect_btn = (ToggleButton)findViewById(R.id.connect);
-    
-    ConnectThread = new DiscConnect();
-    ((DiscConnect) ConnectThread).setup(this);
-    
     
     //宣告Timer
     Timer timer01 =new Timer();
@@ -82,7 +79,7 @@ protected void onCreate(Bundle savedInstanceState) {
     start.setOnClickListener(listener);
     stop.setOnClickListener(listener);
     zero.setOnClickListener(listener);
-    end.setOnClickListener(listener);
+    record.setOnClickListener(listener);
     connect_btn.setOnClickListener(listener);
     
     UiDialogSetting = new UiDialog();
@@ -95,7 +92,12 @@ protected void onStart(){
 	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 	Threshold = prefs.getInt("Threshold", 150);
 	//DEVICE_ADDRESS = prefs.getString("DEVICE_ADDRESS", "NULL");
+    ConnectThread = new DiscConnect();
+    ((DiscConnect) ConnectThread).setup(this);
 	ConnectThread.start();
+    
+    SQLdb = new SQLiteDemoActivity();
+	SQLdb.openDatabase_outside(this);
 	
 	if(DEVICE_ADDRESS != "NULL")
 		ArdConnect(DEVICE_ADDRESS);
@@ -158,6 +160,7 @@ private Handler handler = new Handler(){
                 }
                 s=s+"."+minsec;
                 //s字串為00:00格式
+                
                 timer.setText(s);
            break;
         }
@@ -206,8 +209,9 @@ private OnClickListener listener =new OnClickListener(){
             //TextView 初始化
                 timer.setText("00:00");
             break;
-            case R.id.end:
-                finish();
+            case R.id.record:
+            	String TimeRecord = (String) timer.getText();
+                SQLdb.add(TimeRecord);
             break;    
             case R.id.connect:
             	if(connect_btn.isChecked())
@@ -350,6 +354,12 @@ public boolean onOptionsItemSelected(MenuItem item)
 {
 	UiDialogSetting.UiDialog_main(this, item.getItemId(), Threshold, DEVICE_ADDRESS, DEVICE_ADDRESS2);
 	return true;
+}
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data)
+{
+    super.onActivityResult(requestCode, resultCode, data);
 }
 
 }
