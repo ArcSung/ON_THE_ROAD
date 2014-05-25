@@ -57,7 +57,7 @@ android:textSize="25dp" />
 android:id="@+id/record"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
-android:text="Record"
+android:text="紀錄"
 android:textSize="25dp" />       
 </LinearLayout>
 

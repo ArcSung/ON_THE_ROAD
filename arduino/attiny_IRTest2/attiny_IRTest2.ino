@@ -3,7 +3,7 @@
 
 
 int LEDpin = 4;
-int Threshold = 250;
+int Threshold = 200;
 const byte IRPIN = 1;
 float p[3];
 int i = 0;
@@ -19,9 +19,8 @@ void setup()
   // use the baud rate your bluetooth module is configured to 
   // not all baud rates are working well, i.e. ATMEGA168 works best with 57600
   mySerial.begin(9600);
-  pinMode(LEDpin, OUTPUT);
+  meetAndroid.registerFunction(ArdSetting,'S');
   meetAndroid.registerFunction(StopCount, 'o');
-  meetAndroid.registerFunction(ArdSetting,'s');
   meetAndroid.registerFunction(ArdCheck,'c');
 }
 
@@ -35,15 +34,18 @@ void loop()
      meetAndroid.send(0);   
 }
 
+void ArdSetting(byte flag, byte numOfValues)
+{
+   int ACK = 0;
+   meetAndroid.send(ACK);
+   Threshold = meetAndroid.getInt();  
+}
+
 void StopCount(byte flag, byte numOfValues)
 {
    int received = meetAndroid.getInt();  
 }
 
-void ArdSetting(byte flag, byte numOfValues)
-{
-   Threshold = meetAndroid.getInt();  
-}
 
 void ArdCheck(byte flag, byte numOfValues)
 {
@@ -74,7 +76,7 @@ int average_filter(int average)
 boolean compare_filter(int arg, int thd)
 {
  boolean Flag = false;
- if (Temp < thd && arg <thd)
+ if (Temp < Threshold && arg <Threshold && arg > 20)
    Flag = true;
  else
    Flag = false;

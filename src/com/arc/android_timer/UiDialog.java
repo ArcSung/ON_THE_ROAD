@@ -82,7 +82,7 @@ public class UiDialog implements OnSeekBarChangeListener
 		ThresholdText.setText("Threshold:" + Threshold + "cm");
 		
 		ThresholdSeek=new SeekBar(MainActivity);
-		ThresholdSeek.setProgress((int)((Threshold - 20)* 0.435));
+		ThresholdSeek.setProgress((int)((Threshold - 20)* 0.556));
 		ThresholdSeek.setOnSeekBarChangeListener(this);
 		
 		FinishText=new TextView(MainActivity);
@@ -183,7 +183,7 @@ public class UiDialog implements OnSeekBarChangeListener
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
 		// TODO Auto-generated method stub
-		Threshold=(int) (progress * 2.3 + 20);
+		Threshold=(int) (progress * 1.8 + 20);
 		ThresholdText.setText("Threshold:" + Threshold + "cm");
 		((MainActivity) MainActivity).ArdThreshold_Setting(Threshold);		
 	}
