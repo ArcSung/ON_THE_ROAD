@@ -36,8 +36,6 @@ void loop()
 
 void ArdSetting(byte flag, byte numOfValues)
 {
-   int ACK = 0;
-   meetAndroid.send(ACK);
    Threshold = meetAndroid.getInt();  
 }
 

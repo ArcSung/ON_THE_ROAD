@@ -38,6 +38,8 @@ private Button stop;
 private Button zero;
 private Button record;
 private ToggleButton connect_btn;
+private ToggleButton auto_record_btn;
+
 
 private ArduinoReceiver arduinoReceiver = new ArduinoReceiver();
 private int s_start = 1, s_stop = 2;
@@ -45,6 +47,7 @@ private boolean startflag=false;
 public boolean connectflag=false;
 public boolean FinishContFlag=true;
 public boolean StartContFlag=true;
+public boolean AutoRecordFlag=false;
 private int tsec=0,csec=0,cmin=0, minsec=0, Threshold=150;
 public String DEVICE_ADDRESS = "NULL";
 public String DEVICE_ADDRESS2 = "NULL";
@@ -68,6 +71,7 @@ protected void onCreate(Bundle savedInstanceState) {
     zero = (Button)findViewById(R.id.zero);
     record = (Button)findViewById(R.id.record);
     connect_btn = (ToggleButton)findViewById(R.id.connect);
+    auto_record_btn = (ToggleButton)findViewById(R.id.autorecored);
     
     //宣告Timer
     Timer timer01 =new Timer();
@@ -81,6 +85,8 @@ protected void onCreate(Bundle savedInstanceState) {
     zero.setOnClickListener(listener);
     record.setOnClickListener(listener);
     connect_btn.setOnClickListener(listener);
+    auto_record_btn.setOnClickListener(listener);
+    
     
     UiDialogSetting = new UiDialog();
 }
@@ -107,6 +113,11 @@ protected void onStart(){
 protected void onStop() {
 	super.onStop();
 	
+}
+
+@Override
+protected void onDestroy() {
+	super.onDestroy();
 	PreferenceManager.getDefaultSharedPreferences(this)
 	.edit()
 		.putInt("Threshold", Threshold)
@@ -122,7 +133,9 @@ protected void onStop() {
 	
 	// do never forget to unregister a registered receiver
 	unregisterReceiver(arduinoReceiver);
+
 }
+
 
 
 @Override
@@ -221,6 +234,13 @@ private OnClickListener listener =new OnClickListener(){
             		connectflag = false;
             	}
             break;
+            case R.id.autorecored:
+            	if(connect_btn.isChecked())
+            		AutoRecordFlag = true;
+            	else
+            		AutoRecordFlag = false;
+
+            break;
         }
     } 
 };
@@ -276,10 +296,23 @@ public class ArduinoReceiver extends BroadcastReceiver {
 								{
 									//Log.i(TAG, "ArduinoReceiver:"+data);
 									startflag=false;
+									if(AutoRecordFlag == true)
+									{
+						                //TextView 初始化
+						                String TimeRecord = (String) timer.getText();
+						                SQLdb.add(TimeRecord);
+									}
 								}
 								else if(startflag==false && Start_RX_flag == 0)
 								{
 									//Log.i(TAG, "ArduinoReceiver2:"+data);
+
+									if(AutoRecordFlag == true)
+									{
+						                timer.setText("00:00");
+						                tsec=0;
+						                minsec=0;
+									}    
 									startflag=true;
 								}
 							}	
@@ -304,7 +337,8 @@ public void ArdConnect(String str)
 public void ArdDisconnect(String str)
 {
 	Log.i(TAG, "ArdDisconnect:"+str);
-	Amarino.disconnect(this, DEVICE_ADDRESS);
+	if(Amarino.isCorrectAddressFormat(str))
+		Amarino.disconnect(this, str);
 }
 
 public void ArdConnect_setting(String str, String str2)
@@ -319,8 +353,10 @@ public void ArdThreshold_Setting(int arg)
 {
 	Threshold = arg;
 	//Log.i(TAG, "ArdSetting:"+arg);
-	//Amarino.sendDataToArduino(this, DEVICE_ADDRESS, 'S', arg);
-	//Amarino.sendDataToArduino(this, DEVICE_ADDRESS2, 'S', arg);
+	if(Amarino.isCorrectAddressFormat(DEVICE_ADDRESS))
+		Amarino.sendDataToArduino(this, DEVICE_ADDRESS, 'S', arg);
+	if(Amarino.isCorrectAddressFormat(DEVICE_ADDRESS2))
+		Amarino.sendDataToArduino(this, DEVICE_ADDRESS2, 'S', arg);
 }
 
 public void ArdCheckState(int arg)
@@ -398,6 +434,11 @@ class DiscoverConnect extends Thread
 				    	//Log.i("DiscoverConnect","Reconnect ADDRESS2");
 				}    
 			}
+			else
+			{
+				((MainActivity) MainAct).FinishContFlag=true;
+				((MainActivity) MainAct).StartContFlag=true;
+			}	
 		}
 	}	
 }

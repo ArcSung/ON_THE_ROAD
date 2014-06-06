@@ -61,6 +61,9 @@ android:text="紀錄"
 android:textSize="25dp" />       
 </LinearLayout>
 
+<LinearLayout
+    android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
 <ToggleButton
 android:id="@+id/connect"
 android:layout_width="wrap_content"
@@ -69,6 +72,16 @@ android:textSize="25dp"
 android:textOff="連線"
 android:textOn="中斷"
 />
+<ToggleButton
+android:id="@+id/autorecored"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:textSize="12dp" 
+android:textOff="手動紀錄"
+android:textOn="自動紀錄"
+/>
+</LinearLayout>
+
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
