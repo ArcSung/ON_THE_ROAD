@@ -1,11 +1,5 @@
 package com.arc.ontheroad;
 
-
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -26,8 +19,8 @@ public class MyCameraPreview extends Activity {
     /** Called when the activity is first created. */
     int correct=0;
     CameraView cameraView;
-	private Object Intent;
 	Bitmap newb;
+	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -54,6 +47,8 @@ public class MyCameraPreview extends Activity {
         ((FrameLayout) findViewById(R.id.preview)).addView(cameraView);
                
     }//end onCreate(Bundle savedInstanceState)
+    
+    
 	public boolean onTouchEvent(MotionEvent event)
     {
 		newb=cameraView.onTouchOK();

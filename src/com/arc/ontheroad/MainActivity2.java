@@ -55,7 +55,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RadioGroup;
 
 public class MainActivity2 extends Activity {
 	String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
@@ -70,20 +69,14 @@ public class MainActivity2 extends Activity {
 	ImageView preview_view;
 	boolean   touch = true;
 	Double longitude;
-	Double latitude;
-	JSONArray jsonArrayMain = null;
-	
-    static String addressid = "";
-    static String cityid = "";
-    static String villageid = "";
-    static String streetid = "";
+	Double latitude;	
+	HttpAsyncTask HttpGetData;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.preview);
 		setRequestedOrientation(1);
 	
 	    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -92,11 +85,12 @@ public class MainActivity2 extends Activity {
 	    ImageView preview_view = (ImageView) findViewById(R.id.ImageView_preview);
 		preview_view.setImageResource(R.drawable.main_view); 
 		
-		setlocations();
+		setlocations();  // get Coordinates
 		
 		String url = "http://linarnan.co:3000/roadhelper/aloha?lat="+latitude+"&lng="+longitude;
 		Log.i("ARC",url);
-    	new HttpAsyncTask().execute(url);
+		HttpGetData = new HttpAsyncTask();
+		HttpGetData.execute(url);
 	}
 	
 	public boolean onTouchEvent(MotionEvent event)
@@ -147,7 +141,7 @@ public class MainActivity2 extends Activity {
         	Log.i("Arc","people");
 			Intent intent = new Intent();
 			intent.setClass(MainActivity2.this,PeopleActivity.class);
-			startActivityForResult(intent, ACTIVITY_SELECT_Search);
+			startActivityForResult(intent, ACTIVITY_SELECT_People);
         }
         
         }
@@ -156,8 +150,8 @@ public class MainActivity2 extends Activity {
 		return false;  	
    }
 	
-	public void setlocations(){
-	       
+   public void setlocations()
+   {       
         LocationManager status=(LocationManager)(this.getSystemService(Context.LOCATION_SERVICE));
         if(status.isProviderEnabled(LocationManager.GPS_PROVIDER)||status.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
             //if GPS or internet location open， than  call locationServiceInitial() 
@@ -170,7 +164,8 @@ public class MainActivity2 extends Activity {
  
     }
 	
-	private void locationServiceInitial(){
+	private void locationServiceInitial()
+	{
 		LocationManager lms=(LocationManager)getSystemService(LOCATION_SERVICE);//取得系統location service
         Criteria criteria=new Criteria();//system provider standard
         criteria.setSpeedRequired(true);
@@ -216,8 +211,7 @@ public class MainActivity2 extends Activity {
 			try {
 				Uri currImageURI = data.getData();
 				String[] proj = { Images.Media.DATA, Images.Media.ORIENTATION };
-				Cursor cursor = managedQuery(currImageURI, proj, null, null,
-						null);
+				Cursor cursor = managedQuery(currImageURI, proj, null, null,null);
 				int columnIndex = cursor.getColumnIndex(proj[0]);
 				cursor.moveToFirst();
 				String mCurrentImagePath = cursor.getString(columnIndex);
@@ -227,101 +221,9 @@ public class MainActivity2 extends Activity {
 		}
 	}
 	
-	public static JSONArray  GET(String url){
-        InputStream inputStream = null;
-        String result = "";
-        JSONArray jsonArray = null;
-        try {
- 
-            // create HttpClient
-            HttpClient httpclient = new DefaultHttpClient();
- 
-            // make GET request to the given URL
-            HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
- 
-            // receive response as inputStream
-            inputStream = httpResponse.getEntity().getContent();
- 
-            // convert inputstream to string
-            if(inputStream != null)
-                result = convertInputStreamToString(inputStream);
-            else
-                result = "Did not work!";
-        } catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
-        }
-        
-     // 讀取回應
-     		try {
-     			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,"utf8"),9999999);
-     			//99999為傳流大小，若資料很大，可自行調整
-     			StringBuilder sb = new StringBuilder();
-     			String line = null;
-     			while ((line = reader.readLine()) != null) {
-     				//逐行取得資料
-     				sb.append(line + "\n");
-     			}
-     			inputStream.close();
-     			result = sb.toString();
-     		} catch(Exception e) {
-     			e.printStackTrace();
-     		}
-     		//String strJson="{\n\"000000000000000\": [\n    {\n        \"employee_boycode\": \"00\",\n        \"id\": \"000\",\n        \"address\": \"abcdef\",\n        \"name\": \"name\",\n        \"bankcode\": \"abc\",\n        \"branch_name\": \"abcd\",\n        \"account_no\": \"789\"\n    }\n]\n}\n";
 
-     	    try {
-     	    JSONObject jsnJsonObject = new JSONObject(result);
-
-
-     	   JSONObject contacts = jsnJsonObject.getJSONObject("atLocation");
-
-       
-     	           
-     	          cityid = contacts.getString("city");
-     	          villageid = contacts.getString("village");
-     	          streetid = contacts.getString("street");
-     	            Log.i("Parsed data is",":"+villageid);
-     	        
-
-     	    } catch (JSONException e) {
-            	Log.i("ARC","3");
-     	        e.printStackTrace();
-     	    }
-     		//轉換文字為JSONArray
-     		/*try {
-     			JSONObject jsnJsonObject = new JSONObject(result);
-     		} catch(JSONException e) {
-     			Log.i("ARC","2C" + e.getMessage());
-     			e.printStackTrace();
-     		}*/
- 
-        return jsonArray;
-    }
+		
 	
-	private static String convertInputStreamToString(InputStream inputStream) throws IOException{
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-        String line = "";
-        String result = "";
-        while((line = bufferedReader.readLine()) != null)
-            result += line;
- 
-        inputStream.close();
-        return result;
- 
-    }
-	
-	private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
- 
-        	jsonArrayMain = GET(urls[0]); 
-            return "OK";
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-
-       }
-    }
 	
 	private void Dialog(Bitmap photo)
 	{

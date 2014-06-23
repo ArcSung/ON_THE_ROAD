@@ -1,8 +1,6 @@
 package com.arc.ontheroad;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,21 +9,9 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-
-
-
-
-
-
-
-
-
-
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,40 +19,28 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.YuvImage;
 import android.hardware.Camera;
-import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PreviewCallback;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.media.FaceDetector;
-import android.media.FaceDetector.Face;
-import android.os.AsyncTask;
-import android.os.Environment;
 
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback, Camera.AutoFocusCallback { 
 
 	public Camera mycamera; 
 	public TextView fpsText;
 	public ViewToDraw vtd;
-	private int numberOfFace = 1;
-	private FaceDetector myFaceDetect;
-	private FaceDetector.Face[] myFace;
+	
 	int rgb[];
 	int locat[];
 	int FaceRct[];
@@ -265,105 +239,6 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         
 		mycamera.startPreview();
 	}
-	
-	
-	
-	public static JSONArray  GET(String url){
-        InputStream inputStream = null;
-        String result = "";
-        JSONArray jsonArray = null;
-        try {
- 
-            // create HttpClient
-            HttpClient httpclient = new DefaultHttpClient();
- 
-            // make GET request to the given URL
-            HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
- 
-            // receive response as inputStream
-            inputStream = httpResponse.getEntity().getContent();
- 
-            // convert inputstream to string
-            if(inputStream != null)
-                result = convertInputStreamToString(inputStream);
-            else
-                result = "Did not work!";
-        } catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
-        }
-        
-     // 讀取回應
-     		try {
-     			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,"utf8"),9999999);
-     			//99999為傳流大小，若資料很大，可自行調整
-     			StringBuilder sb = new StringBuilder();
-     			String line = null;
-     			while ((line = reader.readLine()) != null) {
-     				//逐行取得資料
-     				sb.append(line + "\n");
-     			}
-     			inputStream.close();
-     			result = sb.toString();
-     		} catch(Exception e) {
-     			e.printStackTrace();
-     		}
-     		//String strJson="{\n\"000000000000000\": [\n    {\n        \"employee_boycode\": \"00\",\n        \"id\": \"000\",\n        \"address\": \"abcdef\",\n        \"name\": \"name\",\n        \"bankcode\": \"abc\",\n        \"branch_name\": \"abcd\",\n        \"account_no\": \"789\"\n    }\n]\n}\n";
-
-     	    try {
-     	    JSONObject jsnJsonObject = new JSONObject(result);
-
-
-     	   JSONObject contacts = jsnJsonObject.getJSONObject("atLocation");
-
-       
-     	           
-     	          cityid = contacts.getString("city");
-     	          villageid = contacts.getString("village");
-     	          streetid = contacts.getString("street");
-     	            //String boy_code = c.getString("short_name");
-     	            Log.i("Parsed data is",":"+addressid);
-     	        
-
-     	    } catch (JSONException e) {
-            	Log.i("ARC","3");
-     	        e.printStackTrace();
-     	    }
-     		//轉換文字為JSONArray
-     		/*try {
-     			JSONObject jsnJsonObject = new JSONObject(result);
-     		} catch(JSONException e) {
-     			Log.i("ARC","2C" + e.getMessage());
-     			e.printStackTrace();
-     		}*/
- 
-        return jsonArray;
-    }
-	
-	private static String convertInputStreamToString(InputStream inputStream) throws IOException{
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-        String line = "";
-        String result = "";
-        while((line = bufferedReader.readLine()) != null)
-            result += line;
- 
-        inputStream.close();
-        return result;
- 
-    }
-	
-	private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
- 
-        	jsonArrayMain = GET(urls[0]); 
-            return "OK";
-        }
-        // onPostExecute displays the results of the AsyncTask.
-        @Override
-        protected void onPostExecute(String result) {
-
-       }
-    }
 
 	public void onAutoFocus(boolean success, Camera camera) {
 		// TODO Auto-generated method stub
