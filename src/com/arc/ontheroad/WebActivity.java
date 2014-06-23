@@ -33,6 +33,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -40,35 +42,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RadioGroup;
 
-public class MainActivity extends Activity {
+public class WebActivity extends Activity {
 	String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
 	String basepath = extStorageDirectory + "/ESOC_face/";
 	
-	ImageView mainview_view;
-	ImageView preview_view;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) 
-	{
-		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.preview);
-		setRequestedOrientation(1);
+	 WebView mWebView = null;
+	  
+	 @Override
+	 protected void onCreate(Bundle savedInstanceState) {
+	  super.onCreate(savedInstanceState);
+
+	  requestWindowFeature(Window.FEATURE_NO_TITLE);
+	  setContentView(R.layout.preview);
+	  setRequestedOrientation(1);
 	
-	    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-	    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay(); 
-		
-	    ImageView preview_view = (ImageView) findViewById(R.id.ImageView_preview);
-		preview_view.setImageResource(R.drawable.priview_an);  
-		preview_view.setOnClickListener( new View.OnClickListener(){
-	        public void onClick(View view)
-	        {
-	        	Intent intent = new Intent();
-	        	intent.setClass(MainActivity.this,MainActivity2.class);
-	        	startActivity(intent);
-	        	finish();
-	        }
-	    });
-	}	
-
+	  getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	  Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay(); 
+	   
+	  setContentView(R.layout.web);
+	  mWebView = (WebView)findViewById(R.id.webview);	   
+	  mWebView.setWebViewClient(mWebViewClient);
+	  mWebView.loadUrl("http://tw.yahoo.com");
+	 }
+	  
+	  
+	 WebViewClient mWebViewClient = new WebViewClient() {
+	  @Override
+	  public boolean shouldOverrideUrlLoading(WebView view, String url) {
+	   view.loadUrl(url);
+	   return true;
+	  }
+	 };
 }

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.arc.android_timer"
+    package="com.arc.ontheroad."
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="17" />
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+        android:targetSdkVersion="18" />
 
     <application
         android:allowBackup="true"
@@ -16,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.arc.android_timer.MainActivity"
+            android:name="com.arc.ontheroad.MainActivity"
             android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
@@ -24,7 +22,35 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.arc.android_timer.SQLiteDemoActivity" android:screenOrientation="portrait"></activity>
+        <activity 
+            android:label="MainActivity2"
+			android:name="MainActivity2"/>
+        	    
+        <activity 
+            android:label="MyCameraPreview"
+            android:name="MyCameraPreview" />
+        
+        <activity 
+            android:label="SQLiteDemoActivity"
+            android:name="SQLiteDemoActivity" />
+        
+       <activity 
+            android:label="PhoneActivity"
+            android:name="PhoneActivity" />
+       
+       <activity 
+            android:label="PeopleActivity"
+            android:name="PeopleActivity" />
+     
+        
     </application>
-    
+ <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.CAMERA"></uses-permission>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 </manifest>
