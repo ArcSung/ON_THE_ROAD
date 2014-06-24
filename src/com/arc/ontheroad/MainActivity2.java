@@ -1,59 +1,27 @@
 package com.arc.ontheroad;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.FileOutputStream;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.Media;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity2 extends Activity {
@@ -82,8 +50,9 @@ public class MainActivity2 extends Activity {
 	    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay(); 
 		
-	    ImageView preview_view = (ImageView) findViewById(R.id.ImageView_preview);
-		preview_view.setImageResource(R.drawable.main_view); 
+	    setContentView(R.layout.preview);
+	    ImageView main_view = (ImageView) findViewById(R.id.ImageView_preview);
+		main_view.setImageResource(R.drawable.main_index); 
 		
 		setlocations();  // get Coordinates
 		

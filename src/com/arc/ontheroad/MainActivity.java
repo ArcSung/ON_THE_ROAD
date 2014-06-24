@@ -52,12 +52,12 @@ public class MainActivity extends Activity {
 	{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		setContentView(R.layout.preview);
 		setRequestedOrientation(1);
 	
 	    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay(); 
 		
+	    setContentView(R.layout.preview);
 	    ImageView preview_view = (ImageView) findViewById(R.id.ImageView_preview);
 		preview_view.setImageResource(R.drawable.priview_an);  
 		preview_view.setOnClickListener( new View.OnClickListener(){
